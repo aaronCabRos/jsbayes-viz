@@ -3,29 +3,29 @@
   var dagre;
   var d3;
   var jsbayes;
-  const 
-    OUT_LEFT = 1,
-    OUT_TOP = 2,
-    OUT_RIGHT = 4,
-    OUT_BOTTOM = 8;
   const
-    NODE_WIDTH = 220, // 220 is the result of css calc(205px + 1rem)
-    XPAD = 8,
-    YPAD = 8;
+      OUT_LEFT = 1,
+      OUT_TOP = 2,
+      OUT_RIGHT = 4,
+      OUT_BOTTOM = 8;
+  const
+      NODE_WIDTH = 220, // 220 is the result of css calc(205px + 1rem)
+      XPAD = 8,
+      YPAD = 8;
 
   function getPath(n1, n2) {
-    const 
-      c1 = center(n1),
-      c2 = center(n2);
-    const 
-      x1 = c1.x,
-      y1 = c1.y,
-      x2 = c2.x,
-      y2 = c2.y,
-      theta = Math.atan2(y2 - y1, x2 - x1);
-    const 
-      p1 = getPoint(theta, n1),
-      p2 = getPoint(theta + Math.PI, n2);
+    const
+        c1 = center(n1),
+        c2 = center(n2);
+    const
+        x1 = c1.x,
+        y1 = c1.y,
+        x2 = c2.x,
+        y2 = c2.y,
+        theta = Math.atan2(y2 - y1, x2 - x1);
+    const
+        p1 = getPoint(theta, n1),
+        p2 = getPoint(theta + Math.PI, n2);
     if(p1.error || p2.error) {
       return {x1: 0, y1: 0, x2: 0, y2: 0, error: true };
     }
@@ -109,7 +109,7 @@
       },
       addNode: function(id, label, values, probs) {
         const width = 150;
-        const height = values.length * 15 + 20 + 16; 
+        const height = values.length * 15 + 20 + 16;
         const node = {
           id: id,
           label: label,
@@ -192,27 +192,21 @@
   }
   function initSvg(options) {
     d3.select(options.id)
-      .attr({
-        width: options.width,
-        height: options.height
-      })
-      .append('defs')
+        .attr('width', options.width)
+        .attr('height', options.height)
+        .append('defs')
         .append('marker')
-        .attr({
-          id: 'arrow',
-          markerWidth: 10,
-          markerHeight: 10,
-          refX: 5,
-          refY: 3,
-          orient: 'auto',
-          markerUnits: 'strokeWidth'
-        })
-          .append('path')
-          .attr({
-            d: 'M0,0 L0,6 L5,3 z',
-            fill: '#f00',
-            class: 'edge-head'
-          });
+        .attr('id', 'arrow')
+        .attr('markerWidth', 10)
+        .attr('markerHeight', 10)
+        .attr('refX', 5)
+        .attr('refY', 3)
+        .attr('orient', 'auto')
+        .attr('markerUnits', 'strokeWidth')
+        .append('path')
+        .attr('d', 'M0,0 L0,6 L5,3 z')
+        .attr('fill', '#f00')
+        .attr('class', 'edge-head');
   }
   function formatValue(v) {
     const MAX = 5;
@@ -264,9 +258,7 @@
         const value = node.values[j];
         const prob = node.probs[j] * 100;
         d3.select(`rect[data-node="${node.id}"][data-value="${value}"]`)
-            .attr({
-                width: prob
-            });
+            .attr('width', prob);
 
         d3.select(`text[data-node="${node.id}"][data-pvalue="${value}"]`)
             .text(formatPct(node.probs[j]));
@@ -277,18 +269,16 @@
   function drawNodes(options) {
     const graph = options.graph;
     const SAMPLES = options.samples || 10000;
-    
+
     const nodes = d3.select(options.id)
-      .selectAll('g')
-      .data(graph.nodes)
-      .enter()
+        .selectAll('g')
+        .data(graph.nodes)
+        .enter()
         .append('g')
-        .attr({
-          id: function(d) { return d.id; },
-          transform: function(d) { return d.translate(); },
-          class: 'node-group'
-        })
-        .on('mousedown', function(d) { 
+        .attr('id', function(d) { return d.id; })
+        .attr('transform', function(d) { return d.translate(); })
+        .attr('class', 'node-group')
+        .on('mousedown', function(d) {
           d3.selectAll('g.node-group').sort(function(a, b) {
             if(a.id !== d.id) {
               return -1;
@@ -298,64 +288,58 @@
           });
         });
     nodes.append('rect')
-      .attr({
-        x: 0,
-        y: 0,
-        class: 'node-shape',
-        width: NODE_WIDTH,
-        height: function(d) { return d.height; },
-        'pointer-events': 'visible',
-        'data-node': function(d) { return d.id; }
-      });
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('class', 'node-shape')
+        .attr('width', NODE_WIDTH)
+        .attr('height', function(d) { return d.height; })
+        .attr('pointer-events', 'visible')
+        .attr('data-node', function(d) { return d.id; });
     nodes.append('text')
-      .attr({
-        x: NODE_WIDTH / 2,
-        y: 15,
-        fill: 'black',
-        class: 'node-name',
-        'font-family': 'monospace',
-        'font-size': 15
-      })
-      .text(function(d) { return formatNodeName(d.id); })
-      .style('text-anchor', 'middle');
+        .attr('x', NODE_WIDTH / 2)
+        .attr('y', 15)
+        .attr('fill', 'black')
+        .attr('class', 'node-name')
+        .attr('font-family', 'monospace')
+        .attr('font-size', 15)
+        .text(function(d) { return formatNodeName(d.id); })
+        .style('text-anchor', 'middle');
     nodes.each(function(d) {
       let y = 30;
       for(let i=0; i < d.values.length; i++) {
         d3.select(this)
-          .append('text')
-          .attr({
-            x: 2 + XPAD,
-            y: y + YPAD,
-            class: 'node-value',
-            'font-family': 'monospace',
-            'data-node': function(d) { return d.id; },
-            'data-value': function(d) { return d.values[i]; }
-          })
-          .on('click', function(e) {
-            const h = this;
-            const id = e.id;
-            const v = h.attributes['data-value'].value;
-            const g = graph.graph;
-            const node = g.node(id);
-          
-            if(undefined === node.isObserved || false === node.isObserved) {
-              g.observe(id, v);
-            } else {
-              const index1 = g.node(id).valueIndex(v);
-              const index2 = g.node(id).value;
-              if(index1 === index2) {
-                g.unobserve(id);
-              } else {
-                g.observe(id, v);
-              }
-            }
+            .append('text')
+            .attr('x', 2 + XPAD)
+            .attr('y', y + YPAD)
+            .attr('class', 'node-value')
+            .attr('font-family', 'monospace')
+            .attr('data-node', function(d) { return d.id; })
+            .attr('data-value', function(d) { return d.values[i]; })
+            .on('click', function(e) {
+              const h = this;
+              const id = e.id;
+              const v = h.attributes['data-value'].value;
+              const g = graph.graph;
+              const node = g.node(id);
 
-            g.sample(SAMPLES)
-              .then(function (r) {
-                drawNodeBars(graph);
-              });
-          })
-          .text(function(d) { return formatValue(d.values[i]); });
+              if(undefined === node.isObserved || false === node.isObserved) {
+                g.observe(id, v);
+              } else {
+                const index1 = g.node(id).valueIndex(v);
+                const index2 = g.node(id).value;
+                if(index1 === index2) {
+                  g.unobserve(id);
+                } else {
+                  g.observe(id, v);
+                }
+              }
+
+              g.sample(SAMPLES)
+                  .then(function (r) {
+                    drawNodeBars(graph);
+                  });
+            })
+            .text(function(d) { return formatValue(d.values[i]); });
         y += 15;
       }
     });
@@ -363,16 +347,14 @@
       let y = 30;
       for (let i = 0; i < d.probs.length; i++) {
         d3.select(this)
-          .append('text')
-          .attr({
-            x: 2 + d.width + XPAD * 2,
-            y: y + YPAD,
-            'font-family': 'monospace',
-            class: 'node-pct',
-            'data-node': function(d) { return d.id; },
-            'data-pvalue': function(d) { return d.values[i]; }
-          })
-          .text(function(d) { return formatPct(d.probs[i]); });
+            .append('text')
+            .attr('x', 2 + d.width + XPAD * 2)
+            .attr('y', y + YPAD)
+            .attr('font-family', 'monospace')
+            .attr('class', 'node-pct')
+            .attr('data-node', function(d) { return d.id; })
+            .attr('data-pvalue', function(d) { return d.values[i]; })
+            .text(function(d) { return formatPct(d.probs[i]); });
         y += 15;
       }
     });
@@ -380,16 +362,14 @@
       let y = 20;
       for (let i = 0; i < d.probs.length; i++) {
         d3.select(this)
-          .append('rect')
-          .attr({
-            x: 50 + XPAD,
-            y: y + YPAD,
-            width: d.probs[i] * 100,
-            height: 10,
-            class: 'node-bar',
-            'data-node': function(d) { return d.id; },
-            'data-value': function(d) { return d.values[i]; }
-          });
+            .append('rect')
+            .attr('x', 50 + XPAD)
+            .attr('y', y + YPAD)
+            .attr('width', d.probs[i] * 100)
+            .attr('height', 10)
+            .attr('class', 'node-bar')
+            .attr('data-node', function(d) { return d.id; })
+            .attr('data-value', function(d) { return d.values[i]; });
         y += 15;
       }
     });
@@ -399,78 +379,73 @@
       const width = d.width - 50;
       const xInc = width / 4.0;
       let x = 50 + xInc;
-      
+
       for(let i=0; i < 4; i++) {
         d3.select(this)
-          .append('line')
-          .attr({
-            x1: x + XPAD,
-            y1: y1,
-            x2: x + XPAD,
-            y2: y2,
-            class: 'node-iqline',
-            'stroke-dasharray': '5, 1'
-          });
+            .append('line')
+            .attr('x1', x + XPAD)
+            .attr('y1', y1)
+            .attr('x2', x + XPAD)
+            .attr('y2', y2)
+            .attr('class', 'node-iqline')
+            .attr('stroke-dasharray', '5, 1');
         x += xInc;
       }
     });
 
     const drag = d3.behavior.drag()
-      .origin(function(d) {
-        return d;
-      })
-      .on('dragstart', function(e) {
-        d3.event.sourceEvent.stopPropagation();
-      })
-      .on('drag', function(e) {
-        e.x = d3.event.x;
-        e.y = d3.event.y;
+        .origin(function(d) {
+          return d;
+        })
+        .on('dragstart', function(e) {
+          d3.event.sourceEvent.stopPropagation();
+        })
+        .on('drag', function(e) {
+          e.x = d3.event.x;
+          e.y = d3.event.y;
 
-        d3.select(`g#${e.id}`).attr({ transform: e.translate() });
+          d3.select(`g#${e.id}`).attr('transform', e.translate());
 
-        d3.selectAll(`line[data-parent=${e.id}]`)
-          .each(function(d) {
-            const points = graph.edge(d.parent, d.child);
-            d3.select(this).attr({
-              x1: points.x1,
-              y1: points.y1,
-              x2: points.x2,
-              y2: points.y2
-            });
-          });
+          d3.selectAll(`line[data-parent=${e.id}]`)
+              .each(function(d) {
+                const points = graph.edge(d.parent, d.child);
+                d3.select(this)
+                    .attr('x1', points.x1)
+                    .attr('y1', points.y1)
+                    .attr('x2', points.x2)
+                    .attr('y2', points.y2);
+              });
 
-        d3.selectAll(`line[data-child=${e.id}]`)
-          .each(function(d) {
-            const points = graph.edge(d.parent, d.child);
-            d3.select(this).attr({
-              x1: points.x1,
-              y1: points.y1,
-              x2: points.x2,
-              y2: points.y2
-            });
-          });
-      });
+          d3.selectAll(`line[data-child=${e.id}]`)
+              .each(function(d) {
+                const points = graph.edge(d.parent, d.child);
+                d3.select(this)
+                    .attr('x1', points.x1)
+                    .attr('y1', points.y1)
+                    .attr('x2', points.x2)
+                    .attr('y2', points.y2);
+              });
+        });
     nodes.call(drag);
   }
   function drawEdges(options) {
     const graph = options.graph;
     d3.select(options.id)
-      .selectAll('line')
-      .data(graph.edges)
-      .enter()
+        .selectAll('line')
+        .data(graph.edges)
+        .enter()
         .append('line')
         .each(function(d) {
           const points = graph.edge(d.parent, d.child);
-          d3.select(this).attr({
-            'data-parent': d.parent,
-            'data-child': d.child,
-            x1: points.x1,
-            y1: points.y1,
-            x2: points.x2,
-            y2: points.y2,
-            class: 'edge-line',
-            'marker-end': 'url(#arrow)'
-          });
+          d3.select(this)
+              .attr('data-parent', d.parent)
+              .attr('data-child', d.child)
+              .attr('x1', points.x1)
+              .attr('y1', points.y1)
+              .attr('x2', points.x2)
+              .attr('y2', points.y2)
+              .attr('class', 'edge-line')
+              .attr('marker-end', 'url(#arrow)');
         });
   }
   function drawGraph(options) {
@@ -534,7 +509,7 @@
     lib.redrawProbs = function(options) {
       drawNodeBars(options.graph);
     }
-    
+
     lib.downloadSamples = function(graph, asJson, options) {
       var data, filename;
       if(asJson) {
@@ -548,7 +523,7 @@
       }
       downloadData(data, filename);
     }
-    
+
     return lib;
   }
 
