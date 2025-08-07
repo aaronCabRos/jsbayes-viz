@@ -393,22 +393,34 @@
       }
     });
 
-    const drag = d3.behavior.drag()
-        .origin(function(d) {
+    // ✅ Sintaxis moderna de D3 para el comportamiento de arrastre
+    const drag = d3.drag()
+        // .subject() reemplaza a .origin(). Define qué objeto se está arrastrando.
+        // 'd' aquí es el "datum" o dato asociado al elemento.
+        .subject(function(event, d) {
           return d;
         })
-        .on('dragstart', function(e) {
-          d3.event.sourceEvent.stopPropagation();
+        // El evento ahora es el primer argumento de la función.
+        // 'dragstart' se renombra a 'start'.
+        .on('start', function(event, d) {
+          // Se accede al evento original a través del objeto 'event'
+          event.sourceEvent.stopPropagation();
         })
-        .on('drag', function(e) {
-          e.x = d3.event.x;
-          e.y = d3.event.y;
+        .on('drag', function(event, d) {
+          // Actualizamos las coordenadas directamente en el objeto de datos 'd'
+          // usando las coordenadas del objeto 'event'.
+          d.x = event.x;
+          d.y = event.y;
 
-          d3.select(`g#${e.id}`).attr('transform', e.translate());
+          // 'this' dentro del handler se refiere al elemento DOM que se arrastra (el <g>).
+          // Usamos d.translate() que ya estaba en tu código.
+          d3.select(this).attr('transform', d.translate());
 
-          d3.selectAll(`line[data-parent=${e.id}]`)
-              .each(function(d) {
-                const points = graph.edge(d.parent, d.child);
+          // La lógica de actualizar las líneas conectadas no cambia mucho,
+          // solo usamos 'd' en lugar de 'e'.
+          d3.selectAll(`line[data-parent=${d.id}]`)
+              .each(function(edgeData) { // El dato aquí es el de la arista
+                const points = graph.edge(edgeData.parent, edgeData.child);
                 d3.select(this)
                     .attr('x1', points.x1)
                     .attr('y1', points.y1)
@@ -416,9 +428,9 @@
                     .attr('y2', points.y2);
               });
 
-          d3.selectAll(`line[data-child=${e.id}]`)
-              .each(function(d) {
-                const points = graph.edge(d.parent, d.child);
+          d3.selectAll(`line[data-child=${d.id}]`)
+              .each(function(edgeData) {
+                const points = graph.edge(edgeData.parent, edgeData.child);
                 d3.select(this)
                     .attr('x1', points.x1)
                     .attr('y1', points.y1)
