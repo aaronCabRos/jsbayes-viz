@@ -279,7 +279,7 @@
         .attr('transform', function(d) { return d.translate(); })
         .attr('class', 'node-group')
         .on('mousedown', function(d) {
-          d3.selectAll('g.node-group').sort(function(a, b) {
+          d3.select(options.id).selectAll('g.node-group').sort(function(a, b) {
             if(a.id !== d.id) {
               return -1;
             } else {
