@@ -404,7 +404,7 @@
           d.x = event.x;
           d.y = event.y;
           d3.select(this).attr('transform', d.translate());
-          d3.select(options.id).selectAll(`line[data-parent=${d.id}]`)
+          d3.select(options.id).selectAll(`line[data-parent="${d.id}"]`)
               .each(function(edgeData) {
                 const points = graph.edge(edgeData.parent, edgeData.child);
                 d3.select(this)
@@ -414,7 +414,7 @@
                     .attr('y2', points.y2);
               });
 
-          d3.select(options.id).selectAll(`line[data-child=${d.id}]`)
+          d3.select(options.id).selectAll(`line[data-child="${d.id}"]`)
               .each(function(edgeData) {
                 const points = graph.edge(edgeData.parent, edgeData.child);
                 d3.select(this)
